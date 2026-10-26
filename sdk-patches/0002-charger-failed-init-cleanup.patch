@@ -1,0 +1,37 @@
+SPDX-License-Identifier: Apache-2.0
+Source: Xinyuan-LilyGO/SlFli-SDK-Lilygo
+File: sifli-sdk/t_sf32_display_hw_device/charge/sgm41562b/sgm41562b.c
+Base commit: bd4f9945a7638f2f418d4b3c3e5495c6c6c5238d
+Upstream copyright: 2024 RT-Thread Development Team
+Changes: 2026 conol-tony contributors
+
+Detach the initialized IRQ semaphore before freeing the charger handle on
+initialization failure. See licenses/Apache-2.0.txt for the upstream license.
+
+diff --git a/t_sf32_display_hw_device/charge/sgm41562b/sgm41562b.c b/t_sf32_display_hw_device/charge/sgm41562b/sgm41562b.c
+--- a/t_sf32_display_hw_device/charge/sgm41562b/sgm41562b.c
++++ b/t_sf32_display_hw_device/charge/sgm41562b/sgm41562b.c
+@@ -6,6 +6,7 @@
+  * Change Logs:
+  * Date           Author       Notes
+  * 2024-12-18     YourName     First version for SGM41562B charger driver
++ * 2026-10-26     conol-tony   Detach the semaphore on failed initialization.
+  */
+ 
+ #include "sgm41562b.h"
+@@ -150,6 +151,7 @@ sgm41562b_handle_t sgm41562b_init(const char *i2c_bus_name, rt_base_t irq_pin)
+         RT_EOK)
+     {
+         LOG_E("Failed to open I2C bus '%s'", i2c_bus_name);
++        rt_sem_detach(&_handle->irq_sem);
+         rt_mutex_detach(&_handle->lock);
+         rt_free(_handle);
+         _handle = RT_NULL;
+@@ -169,6 +171,7 @@ sgm41562b_handle_t sgm41562b_init(const char *i2c_bus_name, rt_base_t irq_pin)
+     {
+         LOG_E("Failed to read device ID");
+         rt_device_close((rt_device_t)_handle->i2c_bus);
++        rt_sem_detach(&_handle->irq_sem);
+         rt_mutex_detach(&_handle->lock);
+         rt_free(_handle);
+         _handle = RT_NULL;

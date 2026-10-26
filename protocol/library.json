@@ -1,0 +1,12 @@
+{
+  "name": "daikin_arc466",
+  "version": "1.0.0",
+  "description": "Daikin ARC466A41 (280-bit DAIKIN) IR frame encoder, platform independent C99",
+  "license": "MIT",
+  "frameworks": "*",
+  "platforms": "*",
+  "build": {
+    "srcFilter": ["+<daikin_arc466.c>"],
+    "includeDir": "."
+  }
+}

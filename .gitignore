@@ -1,0 +1,37 @@
+# SDK install, downloaded research material and build output
+sdk/
+research/IRremoteESP8266/
+research/esphome/
+research/github/
+research/hardware/
+research/r3-arc466a41/
+research/writeups/
+research/sf32/
+scratch/
+sf32/backups/
+sf32/project/build_*/
+sf32/project/Kconfig.tmp
+sf32/build.log
+sf32/backups.log
+esp32/.pio/
+protocol/.build/
+sf32/*.log
+
+# Local investigation logs; public protocol and hardware references stay tracked.
+research/SF32-board-notes.md
+research/SF32-sdk-notes.md
+
+# Compiler, Python and SCons output.
+*.o
+*.a
+*.elf
+*.map
+*.py[cod]
+__pycache__/
+.sconsign*
+.DS_Store
+
+# Local credentials and environment overrides.
+.env
+.env.*
+!.env.example

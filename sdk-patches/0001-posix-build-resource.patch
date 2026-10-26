@@ -1,0 +1,48 @@
+SPDX-License-Identifier: GPL-2.0-or-later
+Source: OpenSiFli/SiFli-SDK tools/build/building.py
+Base commit: 6fda48ba4da89a0e79509cb9ef971f0d13c97ec7 (v2.4.1)
+Upstream copyright: 2006-2015 RT-Thread Development Team
+Changes: 2026 conol-tony contributors
+
+Load the SDK's resource module explicitly on POSIX, where SCons may already
+have loaded the standard library module with the same name.
+The upstream GPL-2.0-or-later license applies to this build-helper patch;
+see licenses/GPL-2.0.txt. This helper is not linked into the firmware.
+
+diff --git a/tools/build/building.py b/tools/build/building.py
+--- a/tools/build/building.py
++++ b/tools/build/building.py
+@@ -22,6 +22,7 @@
+ # 2015-01-20     Bernard      Add copyright information
+ # 2015-07-25     Bernard      Add LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES for
+ #                             group definition.
++# 2026-10-26     conol-tony   Resolve the POSIX resource module name collision.
+ #
+ 
+ import importlib
+@@ -32,7 +33,25 @@ import string
+ import subprocess
+ import sys
+ import logging
+ 
++# On POSIX, SCons imports the standard-library "resource" module at startup,
++# which then shadows the SDK's tools/build/resource.py for every later
++# "import resource" (AttributeError: module 'resource' has no attribute
++# 'GenPartitionTableHeaderFile'). Load the SDK module explicitly and make it
++# the one found in sys.modules. (Upstream v2.5 renamed it to sdk_resource.)
++def _load_sdk_resource_module():
++    import importlib.util
++    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resource.py')
++    existing = sys.modules.get('resource')
++    if existing is not None and getattr(existing, '__file__', '') == path:
++        return
++    spec = importlib.util.spec_from_file_location('resource', path)
++    module = importlib.util.module_from_spec(spec)
++    sys.modules['resource'] = module
++    spec.loader.exec_module(module)
++
++_load_sdk_resource_module()
++
+ import utils
+ from mkdist import do_copy_file
+ from SCons.Script import *

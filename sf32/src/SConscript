@@ -1,0 +1,16 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+
+# Application sources plus the platform-independent protocol encoder shared
+# with the ESP32 build and the host tests.
+src = Glob('*.c')
+protocol_dir = os.path.abspath(os.path.join(cwd, '..', '..', 'protocol'))
+src += [os.path.join(protocol_dir, 'daikin_arc466.c')]
+
+CPPPATH = [cwd, protocol_dir]
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

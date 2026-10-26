@@ -1,0 +1,21 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  host-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Protocol encoder (C99 and C++17)
+        run: ./protocol/run_tests.sh
+      - name: SF32 keypad UI (cooling and heat-pump profiles)
+        run: ./sf32/run_tests.sh
